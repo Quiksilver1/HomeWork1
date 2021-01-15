@@ -34,11 +34,20 @@ public class Employee {
         persArray[4]=new Employee("Ревин Василий Викторович","технолог 1 категории","reva@mail.ru","79059294122",50000,41);
 
         persArray[1].info();
+        //checkAge(String[] persArray);
 
+        /*for (int i = 0; i < 5; i++) {
+            if (persArray[i].age > 39) {
+                persArray[i].info();
+            }
+        }*/
+    }
+
+   /* public static void checkAge(String[] persArray){
         for (int i = 0; i < 5; i++) {
             if (persArray[i].age > 39) {
                 persArray[i].info();
             }
         }
-    }
+    }*/
 }
