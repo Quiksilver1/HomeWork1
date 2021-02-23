@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 public class MyServer {
@@ -48,24 +49,39 @@ public class MyServer {
         }
     }
 
-    public synchronized void broadcastMessage(String message) throws  IOException{
-        if (message.startsWith("/w")) { //  /private message
-            String[] arr = message.split("\\s");
-            String nick = arr[1];
-            String nickMessage = arr[2];
-            if (nick != null && nickMessage != null) {
-                for (ClientHandler c : clients) {
-                    if (nick.equals(c.getName())) {
-                        c.sendMessage(c.getName()+": "+nickMessage);
-                        break;
-                    }
-                }
-            }
-        }else {
+    public synchronized void broadcastMessage(String message) {
+        try {
             for (ClientHandler c : clients) {
                 c.sendMessage(message);
             }
+        }catch(ConcurrentModificationException ignored){
         }
+    }
+
+    public synchronized void sendMessageToCertainClient(ClientHandler from, String toName, String message) {
+        try {
+            for (ClientHandler c : clients) {
+                if (c.getName().equals(toName)) {
+                    c.sendMessage(message);
+                    from.sendMessage(message);
+                }
+            }
+        }catch (ConcurrentModificationException ignored){
+        }
+    }
+
+
+    public synchronized void getOnlineUsersList(ClientHandler clientHandler) {
+        StringBuilder sb = new StringBuilder("");
+        for (ClientHandler c : clients) {
+            if (!c.equals(clientHandler)) {
+                sb.append(c.getName()).append(", ");
+            }
+        }
+        int size = sb.length();
+        sb.deleteCharAt(size - 1);
+        sb.deleteCharAt(size - 2);
+        clientHandler.sendMessage(sb.toString());
     }
 
 
@@ -85,5 +101,6 @@ public class MyServer {
         }
         return false;
     }
+
 
 }
