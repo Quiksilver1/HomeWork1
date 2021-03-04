@@ -14,7 +14,7 @@ public class Plate {
     }
 
     @Override
-    public String toString() {
+    public java.lang.String toString() {
         return "Plate{" +
                 "food=" + food +
                 '}';
