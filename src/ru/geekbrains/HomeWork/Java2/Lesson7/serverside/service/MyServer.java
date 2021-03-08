@@ -2,9 +2,12 @@ package ru.geekbrains.HomeWork.Java2.Lesson7.serverside.service;
 
 import ru.geekbrains.HomeWork.Java2.Lesson7.serverside.interfaces.AuthService;
 
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -20,11 +23,8 @@ public class MyServer {
 
     private AuthService authService;
 
-    public AuthService getAuthService() {
-        return this.authService;
-    }
-
     public MyServer() {
+        Statement statement=null;
         try (ServerSocket server = new ServerSocket(PORT)){
 
             authService = new BaseAuthService();
@@ -42,6 +42,8 @@ public class MyServer {
 
         } catch (IOException e){
             System.out.println("Server is down");
+        } catch (SQLException | ClassNotFoundException throwables) {
+            throwables.printStackTrace();
         } finally {
             if (authService != null) {
                 authService.stop();
@@ -83,6 +85,8 @@ public class MyServer {
         sb.deleteCharAt(size - 2);
         clientHandler.sendMessage(sb.toString());
     }
+
+
 
 
     public synchronized void subscribe(ClientHandler client) {
