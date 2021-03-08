@@ -15,21 +15,20 @@ public class Test {
         makeAL(n,numbers);
         System.out.println(numbers.toString());
 
-        Box<Apple> box1=new Box<>("1",new ArrayList<>());
-        Box<Apple> box3=new Box<>("3",new ArrayList<>());
-        Box<Orange> box2=new Box<>("2",new ArrayList<>());
+        Box<Apple> box1=new Box<>();
+        Box<Apple> box3=new Box<>();
+        Box<Orange> box2=new Box<>();
         box1.addFruit(new Apple());
         box1.addFruit(new Apple());
         box3.addFruit(new Apple());
         box3.addFruit(new Apple());
-        box3.getBox();
-        box1.getBox();
         box2.addFruit(new Orange());
-        box2.getBox();
-        System.out.println("Box "+box1.getName()+":"+box1.getWeight());
-        System.out.println("Box "+box2.getName()+":"+box2.getWeight());
+        System.out.println("Box:"+box1.getWeight());
+        System.out.println("Box:"+box2.getWeight());
         System.out.println(box1.balance(box3));
         box1.transfer(box3);
+        System.out.println("Box:"+box3.getWeight());
+        System.out.println("Box:"+box1.getWeight());
     }
 
     public static <T> void permutation(T[] t, int a, int b){
