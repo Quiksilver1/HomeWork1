@@ -1,6 +1,5 @@
 package ru.geekbrains.HomeWork.Java2.Lesson7.serverside.service;
 
-import com.mysql.cj.jdbc.MysqlDataSource;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

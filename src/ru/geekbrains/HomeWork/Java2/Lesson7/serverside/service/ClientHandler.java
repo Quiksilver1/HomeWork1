@@ -23,14 +23,11 @@ public class ClientHandler {
     private String name;
     private boolean isAuthorized;
     long a=System.currentTimeMillis();
-    ArrayList<ResultSet> queryList=new ArrayList<ResultSet>();
 
 
     public ClientHandler(MyServer myServer, Socket socket) {
 
         Statement statement=null;
-
-
 
         try {
 
@@ -80,9 +77,6 @@ public class ClientHandler {
             }
         }
     }
-
-
-
 
     public void authentication() throws IOException, SQLException, ClassNotFoundException {
 
