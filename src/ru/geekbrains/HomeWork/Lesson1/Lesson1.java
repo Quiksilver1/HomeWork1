@@ -4,6 +4,7 @@ public class Lesson1{
 
     public static void main(String[] args) {
 
+
         System.out.println(calc(4,5,6,7));
         System.out.println(task10and20(9,5));
         isPozOrNegative(-4);
