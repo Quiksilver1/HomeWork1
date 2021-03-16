@@ -1,5 +1,4 @@
 package ru.geekbrains.HomeWork.Java2.Lesson7.clientside.two;
-
 import ru.geekbrains.HomeWork.Java2.Lesson7.serverside.service.ClientHandler;
 import ru.geekbrains.HomeWork.Java2.Lesson7.serverside.service.Singleton;
 import ru.geekbrains.HomeWork.User;
@@ -59,16 +58,20 @@ public class EchoClient extends JFrame {
                     String messageFromServer = dis.readUTF();
                     if (messageFromServer.startsWith("/authok")) {
                         String[] arr = messageFromServer.split("\\s");
-                        ResultSet rsNick = statement.executeQuery("SELECT * FROM users WHERE nick='" + arr[1]+"'");
-                        while(rsNick.next()) {
+                        ResultSet rsNick = statement.executeQuery("SELECT * FROM users WHERE nick='" + arr[1] + "'");
+                        while (rsNick.next()) {
                             User user1 = new User().userBuilder(rsNick);
-                            log=user1.getLogin();
-                            nick=user1.getNick();
+                            log = user1.getLogin();
+                            nick = user1.getNick();
                         }
-                        file = new File("C:\\Program Files\\Java\\HomeWork\\src\\ru\\geekbrains\\HomeWork\\Java2\\Lesson7\\clientside\\history_"+log+".txt");
+                        file = new File("C:\\Program Files\\Java\\HomeWork\\src\\ru\\geekbrains\\HomeWork\\Java2\\Lesson7\\clientside\\history_" + log + ".txt");
                         isAuthorized = true;
-                        chatArea.append(messageFromServer + "\n");
                     }
+                    chatArea.append(messageFromServer + "\n");
+                    break;
+                }
+                while (isAuthorized) {
+
 
                     try(BufferedReader reader=new BufferedReader(new FileReader(localHistory))){
                         String str;
@@ -91,9 +94,7 @@ public class EchoClient extends JFrame {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    break;
-                }
-                while (isAuthorized) {
+
                     String messageFromServer = dis.readUTF();
                     chatArea.append(messageFromServer + "\n");
 
@@ -181,12 +182,8 @@ public class EchoClient extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new ru.geekbrains.HomeWork.Java2.Lesson7.clientside.two.EchoClient();
+            new EchoClient();
         });
     }
 
-    private String getLog(String log){
-        String los="das";
-        return log;
-    }
 }

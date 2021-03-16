@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class ClientHandler {
@@ -22,12 +24,12 @@ public class ClientHandler {
     private String pas;
     private String name;
     private boolean isAuthorized;
+    private  baseAS baseAS;
     long a=System.currentTimeMillis();
 
 
     public ClientHandler(MyServer myServer, Socket socket) {
 
-        Statement statement=null;
 
         try {
 
@@ -37,9 +39,8 @@ public class ClientHandler {
             this.dos = new DataOutputStream(socket.getOutputStream());
             this.name = "";
 
-            statement= Singleton.getConnection().createStatement();
 
-            new Thread(() -> {
+            Thread t1 = new Thread(() -> {
                 try {
                     authentication();
                     readMessage();
@@ -49,56 +50,35 @@ public class ClientHandler {
                     closeConnection();
                 }
 
-            }).start();
+            });
 
-            new Thread(() -> {
+            Thread t2 = new Thread(() -> {
                 try {
-                    Thread.sleep(120000);
+                    Thread.sleep(12000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 if (!isAuthorized) {
-                    System.out.println(this.getName()+" leave");
                     closeConnection();
                 }
-            }).start();
+            });
+
+            ExecutorService executorService = Executors.newFixedThreadPool(2);
+            executorService.execute(t1);
+            executorService.execute(t2);
         } catch (IOException e) {
             closeConnection();
             throw new RuntimeException("Problem with ClientHandler");
-        } catch (SQLException | ClassNotFoundException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            try {
-                if (statement!=null) {
-                    statement.close();
-                }
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
         }
     }
 
     public void authentication() throws IOException, SQLException, ClassNotFoundException {
 
-        Statement statement=null;
-
-        statement= Singleton.getConnection().createStatement();
-
         while (true) {
             String str = dis.readUTF();
-            if (str.startsWith("/auth")) { //  /auth login password
-                String [] arr = str.split("\\s");
-                ResultSet rsNick=statement.executeQuery("SELECT * FROM users WHERE login='"+arr[1]+"' AND password='"+arr[2]+"'");
-                while(rsNick.next()) {
-                    User user1 = new User().userBuilder(rsNick);
-                    log=user1.getLogin();
-                    pas=user1.getPassword();
-                    String nick = user1.getNick();
-                    System.out.println(nick);
-                /*String nick = myServer
-                        .getAuthService()
-                        .getNickByLoginAndPassword(arr[1], arr[2]);*/
-                    if (nick != null) {
+            if (str.startsWith("/auth")) {
+                String nick=baseAS.auth(str);
+                    if (nick != "foul") {
                         if (!myServer.isNickBusy(nick)) {
                             isAuthorized = true;
                             sendMessage("/authok " + nick);
@@ -112,7 +92,6 @@ public class ClientHandler {
                     } else {
                         sendMessage("Wrong login and password");
                     }
-                }
             } else {
                 sendMessage("Your command will be need start with /auth");
             }
